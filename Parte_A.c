@@ -1,8 +1,8 @@
 /*
-* @file    : <nombre del archivo: por ejemplo, “tarea01.c”>
-* @author  : <integrantes del grupo, en líneas diferentes>
-* @date    : 04/10/2021
-* @brief   : Código para tarea 01 en ELO 321, semestre 2021-2
+* @file    : Parte_A.c
+* @author  : Robert Parra
+* @date    : 31/10/2021
+* @brief   : Código de la parte A para tarea 01 en ELO 321, semestre 2021-2
 */
 
 /**
@@ -24,7 +24,8 @@
  */
 
 /*
- * Recordar reclamar que la sucession de fibonacci comienza en 0 siendo este el primer indice
+ * Aclaracion, el indice 0 de la sucesion de fibonacci correspondera al 0 mismo, siendo entonces, el numero 1 el indice 1, el indice 2 vuelve a ser el 1
+ * y para el tercer indice correspondera al 2, de esa manera se cumple con lo pedido debido a que en el pdf se muestra al 55 como el indice 10.
  * */
 
 #include <stdio.h>
@@ -49,38 +50,41 @@
 int validacion(int value);
 
 /**
- * Sucession de fibonacci como tal
+ * Funcion que realiza el calculo
+ * de la sucession de fibonacci retornando un int correspondiente al
+ * numero de fibonacci
  * @return
  */
 int Fibonacci_serie(unsigned int value);
 
 /**
- * Sucession de fibonacci como tal
- * @return
+ * recibe el número positivo como argumento y retorna el índice de este número en la serie de
+ * Fibonacci, o retorna -1 en caso de que el número no esté en la serie,
+ * si la función recibe como argumento el número 55, retornará el número 10
+ * @return int
  */
 int search_Fibonacci_series(unsigned int value);
 
 /**
- * Sucession de fibonacci como tal
- * @return
+ * Genera un proceso hijo, a fin de ejecutar una llamada al
+ * sistema e imprimir por pantalla la hora y fecha de ejecución del programa.
  */
 void child_time_proccess();
 
 /**
- * Sucession de fibonacci como tal
- * @return
+ * La funcion realiza el proceso de las funciones correspondientes a fibonacci, ya que esta manera
+ * el proceso hijo creado en esta funcion debe enviar al proceso padre a través del ordinary pipe un mensaje/string
+ * informando el resultado del procesamiento de estas funciones de fibonacci, y luego terminar su ejecución.
+ * @return int
  */
-int ordinary_pipe();
+int ordinary_pipe(int value);
 
 int main(int argc, char **argv) {
     if (argc==2){
-        //char *ptr;
         unsigned int a = atoi(argv[1]);//hace referencia al valor que se ingresa por comando
 
         validacion(a);
-
         child_time_proccess();
-
         ordinary_pipe(a);
 
         //ps -elf
@@ -112,7 +116,6 @@ int Fibonacci_serie(unsigned int value){
     int nextF = 0;
 
     while (nextF <= value) {
-        //indice++;
         if (nextF == value){
             valid = 0;
             return indice;
@@ -139,22 +142,20 @@ int search_Fibonacci_series(unsigned int value){
 void child_time_proccess(){
     if(fork() == 0)
     {
-        // this is the child process
-        //printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
+        // Este corresponde al proceso hijo
         time_t result;
         result = time(NULL);
         printf("%s\n",asctime(localtime(&result)));
         exit(0);
     }else{
-        //this is the parent process
+        //Este corresponde al proceso padre
     }
-    sleep(50);
     wait(NULL);
 }
 
 int ordinary_pipe(int value){
 
-    /*ordinary_pipe creation*/
+    /* creacion del ordinary_pipe */
 
     char read_msg[BUFFER_SIZE];
     char write_msg[BUFFER_SIZE];
@@ -162,7 +163,7 @@ int ordinary_pipe(int value){
 
     pid_t pid;
     int fd[2];
-    /* create the pipe */
+    /* creacion del pipe */
     if (pipe(fd) == -1) {
         fprintf(stderr,"Pipe failed");
         return 1;
@@ -170,20 +171,18 @@ int ordinary_pipe(int value){
 
     if(fork() == 0)
     {
-        // this is the child process
-        //printf("[son] pid %d from [parent] pid %d\n",getpid(),getppid());
+        // Este corresponde al proceso hijo
 
         int respond = search_Fibonacci_series(value);
 
         sprintf(write_msg, "%d",respond);
 
-        /* close the unused end of the pipe */
         close(fd[READ_END]);
 
-        /* write to the pipe */
+        /* escribe en el pipe */
         write(fd[WRITE_END], write_msg, strlen(write_msg)+1);
 
-        /* close the write end of the pipe */
+        /* cierra la escritura del pipe */
         close(fd[WRITE_END]);
 
         exit(0);
@@ -193,7 +192,7 @@ int ordinary_pipe(int value){
         /* close the unused end of the pipe */
         close(fd[WRITE_END]);
 
-        /* read from the pipe */
+        /* lee desde el pipe */
         read(fd[READ_END], read_msg, BUFFER_SIZE);
 
         if (strcmp (read_msg, "-1") == 0){
@@ -201,9 +200,15 @@ int ordinary_pipe(int value){
         }else{
             printf("El mensaje fue recibido correctamente,\nel numero es parte de la succesion de fibonacci y su indice es: %s\n",read_msg);
         }
-        /* close the write end of the pipe */
+        /* cierra la escritura y el pipe mismo*/
         close(fd[READ_END]);
 
     }
+
+    /*
+     * Sleep pedido por el profesor para que el proceso hijo pase a ser un “zombie”.
+     */
+    sleep(50);
+
     wait(NULL);
 }
