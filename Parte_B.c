@@ -16,63 +16,70 @@ int Fib_Array [LENGTH];
 
 int validacion(int value);
 
-void* get_Fibonacci_series(void*);
+void* get_Fibonacci_series(int*);
 
 int main(int argc, char **argv) {
+    int *NumFibonacci = NULL;
 
     pthread_t tid; /* the thread identifier */
     pthread_attr_t attr; /* set of thread attributes */
 
     if (argc==2) {
-        unsigned int a = atoi(argv[1]);//hace referencia al valor que se ingresa por comando
+        int a = (atoi(argv[1]));//hace referencia al valor que se ingresa por comando
         int validator = validacion(a);
 
         if(a<=LENGTH){
+            NumFibonacci = &a;
+
             //Cumple la condicion
 
             /* get the default attributes */
             pthread_attr_init(&attr);
             /* create the thread */
-            pthread_create(&tid, &attr, get_Fibonacci_series((void *) a), argv[1]);
+            pthread_create(&tid, &attr, get_Fibonacci_series(NumFibonacci), argv[1]);
             /* wait for the thread to exit */
             pthread_join(tid,NULL);
+
             for (int i = 0; i <= LENGTH; ++i) {
                 printf("The number is: %d \n",Fib_Array[i]);
             }
+
         }else{
             exit(-1);
         }
 
     } else{ //caso contrario, si no cumple retorna 1
-        printf("El programa funciona como ParteA.out <Numero>\n");
+        printf("El programa funciona como ParteB.out <Numero>\n");
         return EXIT_FAILURE;
     }
-
 }
 
 /* The thread will begin control in this function */
-void* get_Fibonacci_series(void* numb){
-    int i, n;
+void* get_Fibonacci_series(int* numb){
+
+    int i;
 
     // initialize first and second terms
     int t1 = 0, t2 = 1;
-
+    Fib_Array[0] = t1;
     // initialize the next term (3rd term)
     int nextTerm = t1 + t2;
 
-
-
-    // print the first two terms t1 and t2
-    printf("Fibonacci Series: %d, %d, ", t1, t2);
+    if(*numb > 1){
+        Fib_Array[1] = 1;
+    }
 
     // print 3rd to nth terms
-    for (i = 3; i <= n; ++i) {
-        printf("%d, ", nextTerm);
+    for (i = 2; i <= *numb; ++i) {
         t1 = t2;
         t2 = nextTerm;
+        Fib_Array[i] = nextTerm;
         nextTerm = t1 + t2;
     }
 
+    // Thread ID: #### calculó los ## números de la serie Fibonacci
+    printf("Thread ID = %lu calculó los %d números de la serie Fibonacci\n", pthread_self(),*numb);
+    pthread_exit(0);
 }
 
 int validacion(int value){

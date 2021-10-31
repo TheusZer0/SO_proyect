@@ -112,12 +112,12 @@ int Fibonacci_serie(unsigned int value){
     int nextF = 0;
 
     while (nextF <= value) {
-        indice++;
+        //indice++;
         if (nextF == value){
             valid = 0;
             return indice;
         }
-        //indice++;
+        indice++;
         f1 = f2;
         f2 = nextF;
         nextF = f1 + f2;
