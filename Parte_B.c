@@ -93,7 +93,7 @@ void* get_Fibonacci_series(void* param){
     // se realiza la inicializacion del 3r termino
     int nextTerm = t1 + t2;
     // si el numb ingresado es mayor a 1 entonces quiere decir que el indice 1 existe
-    if(numb > 1){
+    if(numb >= 1){
         Fib_Array[1] = 1;
     }
     // realiza el funcionamiento de fibonacci
