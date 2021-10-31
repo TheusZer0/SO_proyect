@@ -15,6 +15,6 @@ La tarea se divide en 2 partes:
     - Demostracion_2_Proceso_Zombie.png
 
 - La parte B refiere al archivo de nombre Parte_B.c, siendo este la resolucion de la parte B de la tarea, su compilacion es la siguiente:
-    gcc -g -pthread Parte_B.c -o parte_b.out
+    gcc -std=c99 -g -pthread Parte_B.c -o parte_b.out
 - Su ejecucion es la siguiente:
     ./parte_b.out <NUMERO>
