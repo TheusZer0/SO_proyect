@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
         return EXIT_FAILURE;
     }
     if ((atoi(argv[1]) >= LENGTH) | ((atoi(argv[1]) < 0)) ){
-        printf("Ingreso un numero fuera de alcance para el programa, recordar que el maximo es 15\n");
+        printf("Ingreso un numero fuera de alcance para el programa, recordar que el maximo es 14\n");
         return EXIT_FAILURE;
     }
 
